@@ -109,6 +109,12 @@ tng_free_result($result);
 
 $unknownsex = $totalpeople - $males - $females;
 
+$query = "SELECT count(id) as pcount FROM $people_table WHERE firstname = 'Unbekannt' $wherestr2";
+$result =  tng_query($query);
+$row = tng_fetch_assoc( $result );
+$unbekannt = $row['pcount'];
+tng_free_result($result);
+
 $query = "SELECT count(id) as pcount FROM $people_table WHERE living != 0 $wherestr2";
 $result =  tng_query($query);
 $row = tng_fetch_assoc( $result );
@@ -197,6 +203,7 @@ $totalfamilies = number_format($totalfamilies);
 $males = number_format($males);
 $females = number_format($females);
 $unknownsex = number_format($unknownsex);
+$unbekannt = number_format($unbekannt);
 
 echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['totindividuals']}</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$totalpeople &nbsp;</span></td></tr>\n";
@@ -209,6 +216,9 @@ echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$females ($p
 
 echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['totunknown']}</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$unknownsex ($percentunknownsex%) &nbsp;</span></td></tr>\n";
+
+echo "<tr><td class=\"databack\"><span class=\"normal\">Personen mit unbekanntem Vornamen</span></td>\n";
+echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$unbekannt &nbsp;</span></td></tr>\n";
 
 echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['totliving']}</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$numliving &nbsp;</span></td></tr>\n";
