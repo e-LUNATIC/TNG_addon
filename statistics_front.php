@@ -11,20 +11,9 @@ $getperson_url = getURL( "getperson", 1 );
 $showtree_url = getURL( "showtree", 1 );
 $statistics_url = getURL( "statistics", 1 );
 
-$treestr = $tree ? " ({$text['tree']}: $tree)" : "";
-$logstring = "<a href=\"$statistics_url" . "tree=$tree\">" . xmlcharacters($text['databasestatistics'] . $treestr) . "</a>";
-writelog($logstring);
-preparebookmark($logstring);
-
-
 ?>
 
 <?php
-echo treeDropdown(array('startform' => true, 'endform' => true, 'action' => 'statistics', 'method' => 'get', 'name' => 'form1', 'id' => 'form1'));
-
-$header = "";
-$headerr = $enableminimap ? " data-tablesaw-minimap" : "";
-$headerr .= $enablemodeswitch ? " data-tablesaw-mode-switch" : "";
 
 if($sitever != "standard") {
 	if($tabletype == "toggle") $tabletype = "columntoggle";
@@ -41,19 +30,6 @@ echo $header;
 		</tr>
 	</thead>
 <?php
-$query = "SELECT lastimportdate, treename, secret FROM $trees_table WHERE gedcom = \"$tree\"";
-$result = tng_query($query);
-$treerow = tng_fetch_array( $result, 'assoc' );
-$lastimportdate = $treerow['lastimportdate'];
-
-if( $tree ) {
-    $wherestr = "WHERE gedcom = \"$tree\"";
-    $wherestr2 = "AND gedcom= \"$tree\"";
-}
-else {
-    $wherestr = "";
-    $wherestr2 = "";
-}
 
 $query = "SELECT count(id) as pcount FROM $people_table $wherestr";
 $result =  tng_query($query);
@@ -74,20 +50,11 @@ $row = tng_fetch_array($result);
 $uniquesurnames = number_format($row['lncount']);
 tng_free_result($result);
 
-$totalmedia = array();
-foreach( $mediatypes as $mediatype ) {
-	$mediatypeID = $mediatype['ID'];
-	if( $tree ) {
-		$query = "SELECT count(distinct mediaID) as mcount FROM $media_table
-	    WHERE mediatypeID = \"$mediatypeID\" AND (gedcom = \"$tree\" OR gedcom = \"\")";
-	}
-	else
-		$query = "SELECT count(mediaID) as mcount FROM $media_table WHERE mediatypeID = \"$mediatypeID\"";
-	$result =  tng_query($query);
-	$row = tng_fetch_assoc( $result );
-	$totalmedia[$mediatypeID] = number_format($row['mcount']);
-	tng_free_result($result);
-}
+$query = "SELECT count(mediaID) as pcount FROM $media_table $wherestr";
+$result =  tng_query($query);
+$row = tng_fetch_assoc( $result );
+$medias = $row['pcount'];
+tng_free_result($result);
 
 $query = "SELECT count(id) as scount FROM $sources_table $wherestr";
 $result =  tng_query($query);
@@ -229,12 +196,8 @@ echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$totalfamili
 echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['totuniquesn']}</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$uniquesurnames &nbsp;</span></td></tr>\n";
 
-foreach( $mediatypes as $mediatype ) {
-	$mediatypeID = $mediatype['ID'];
-	$titlestr = $text[$mediatypeID] ? $text[$mediatypeID] : $mediatypes_display[$mediatypeID];
-	echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['total']} $titlestr</span></td>\n";
-	echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">" . $totalmedia[$mediatypeID] . " &nbsp;</span></td></tr>\n";
-}
+echo "<tr><td class=\"databack\"><span class=\"normal\">Anzahl der Medien (Photo, Video, Dokumente)</span></td>\n";
+echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$medias &nbsp;</span></td></tr>\n";
 
 echo "<tr><td class=\"databack\"><span class=\"normal\">{$text['totsources']}</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">$totalsources &nbsp;</span></td></tr>\n";
@@ -248,16 +211,6 @@ if($firstallowed)
 echo "&nbsp;</span></td>\n";
 echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">" . displayDate( $firstbirthdate ) . " &nbsp;</span></td></tr>\n";
 
-if( $tngconfig['lastimport'] && $treerow['treename'] && $lastimportdate ) {
-	echo "<tr><td class=\"databack\"><span class=\"normal\">" . $text['lastimportdate'] . "</span></td>\n";
-
-	$importtime = strtotime($lastimportdate);
-	if(substr($lastimport,11,8) != "00:00:00")
-		$importtime += ($time_offset * 3600);
-	$importdate = strftime("%d %b %Y %H:%M:%S",$importtime);
-
-	echo "<td class=\"databack\" align=\"right\"><span class=\"normal\">" . displayDate( $importdate ) . " &nbsp;</span></td></tr>\n";
-}
 ?>
 </table>
 <br />
