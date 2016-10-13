@@ -2,9 +2,9 @@
 1. Zeile 237 der Datei statistics_front.php und Zeile 31 von last_updates.php entsprechend anpassen.
 2. Alle 3 Dateien in das TNG Basisverzeichnis kopieren.
 
-Vorhandene Dateien werden nicht überschreiben und auch sonst finden keine Änderungen bei TNG statt.
+Vorhandene Dateien werden nicht überschreiben und auch sonst finden keine Änderungen bei TNG oder der Datenbank statt.
 
-Die Dateien statistics_front.php und last_updates.php können nun direkt aufgerufen werden, unabhängig von den eingestellten Zugriffsrechten bei TNG. 
+Die Dateien statistics_front.php und last_updates.php können nun direkt mit dem Browser aufgerufen werden, unabhängig von den eingestellten Zugriffsrechten bei TNG. Es erfolgt nur die Anzeige der entsprechenden Daten ohne TNG Template bzw. Menü.
 
 Datenschutz bei lebenden Personen ist nach wie vor Gewährleistet.
 
